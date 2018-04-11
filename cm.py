@@ -112,11 +112,8 @@ if __name__ == '__main__':
     # yours may be different
     host = 'imap.exmail.qq.com'
     port = '993'
-    #user = input("Email:")
-    #passwd = getpass.getpass()
-    #work_path = input("Enter your work dir:")
-    user = "wangweifeng@cheerlandgroup.com"
-    passwd = 'Wwf1992421'
-    work_path = "./"
+    user = input("Email:")
+    passwd = getpass.getpass()
+    work_path = input("Enter your work dir:")
 
     Main(host,port,user,passwd,work_path)
