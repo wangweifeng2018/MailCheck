@@ -67,7 +67,8 @@ def Main(host,port,user,passwd,work_path):
         charset,sub = sub_object[1],sub_object[0]
 
         if charset != None:
-            print "Subject:",sub.decode(charset)
+            subject = sub.decode(charset)
+            print "Subject:",subject
               
         # Get message body 
         attach = {}
@@ -78,28 +79,32 @@ def Main(host,port,user,passwd,work_path):
             mycode = part.get_content_charset()
 
             if contentType == 'text/plain':
-                content = part.get_payload(decode=True)
-                print "Message:\n",content.decode(charset)    
+                content = part.get_payload(decode=True).decode(charset)
+                print "Message:\n",content    
             
             #Get attachment
             if part.get('Content-Disposition') != None:
                 filename = part.get_filename()
-                attach_name = email.Header.decode_header(filename)[0][0]
+                attach_name = email.Header.decode_header(filename)[0][0].decode(charset)
                 attach_data = part.get_payload(decode=True)
                 attach[attach_name] = attach_data
- 
-        #rewrite attachment
+       
+        #Make a date dir for every email
         date_dir = Make_date_dir(work_path+'/')
+        
+        #Write the content of the msg
+        cont_file = os.path.join(date_dir+"/","Content")
+        if not os.path.isfile(cont_file):
+            with open(cont_file,"wb") as fh:
+                fh.write(content)
+        
+        #Write the attachment
         for name,data in attach.items():
             att_file = os.path.join(date_dir+'/',name)
             if not os.path.isfile(att_file):
                 with open(att_file,'wb') as fp:
                     fp.write(data)
-            
-                os.path.join(date_dir+'/',name)   
-                if not os.path.isfile(att_file): 
-                    with open(att_path,'wb') as fp:
-                            fp.write(da) 
+
     m.logout()
     print ("Email count:",count)
     return 
@@ -112,8 +117,8 @@ if __name__ == '__main__':
     # yours may be different
     host = 'imap.exmail.qq.com'
     port = '993'
-    user = input("Email:")
+    user = raw_input("Email:")
     passwd = getpass.getpass()
-    work_path = input("Enter your work dir:")
-
+    work_path = raw_input("Enter your work dir:")
+    work_path = "./"
     Main(host,port,user,passwd,work_path)
